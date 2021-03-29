@@ -1,0 +1,35 @@
+Rewrite Board so that the constructor doesnt do everything 
+	buildBoard()
+	assignPieces(Map<Location, ChessPiece> chessPieces)
+	resetPieces()
+
+Issue Tracking System 
+	Tests:
+	1. Setting Up Game
+	2. Pieces movements
+		> Light & Dark 
+			* Pawns 
+				** initial moves 
+				** Get moves (4 corners + middle area of board)
+				** eat right 
+				** eat left 
+				** upgrade to queen
+			* Rooks 
+				** initial moves
+				** Get moves (4 corners + middle area of board)
+			* Bishops 
+				** initial moves
+				** Get moves (4 corners + middle area of board)
+			* Knights 
+				** initial moves
+				** Get moves (4 corners + middle area of board) 
+			* King 
+				** initial moves
+				** Get moves (4 corners + middle area of board)
+			* Queen 
+				** initial moves
+				** Get moves (4 corners + middle area of board)
+	3. Castling 
+		> Light & Dark 
+			* Right 
+			* Left 
