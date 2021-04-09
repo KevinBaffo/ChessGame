@@ -19,6 +19,7 @@ public class Rook extends ChessPiece implements Movable {
 	@Override
 	public List<Location> getValidMoves(Board board) {
 		List<Location> moveCandidates = new ArrayList<>();
+		
 		// Pieces with same Rank
 		moveCandidates.addAll(getCandidates(board, 0, 1));
 		moveCandidates.addAll(getCandidates(board, 0, -1));

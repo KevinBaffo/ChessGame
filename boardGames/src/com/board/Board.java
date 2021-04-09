@@ -1,7 +1,5 @@
 package com.board;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.Map;
 import com.squares.Square;
@@ -12,7 +10,7 @@ public class Board {
 	private static final Integer CELL_SIZE = 64;
 	private static final File[] files = File.values();
 	private final Map<Location, Square> locationsquareMap;
-	Square[][] boardSquares = new Square[BOARD_LENGTH][BOARD_LENGTH];
+	Square[][] boardSquares = new Square[BOARD_LENGTH][BOARD_LENGTH]; // Starts from top left of board 
 	public Board() {
 		locationsquareMap = new HashMap<>();
 		for(int i = 0; i < boardSquares.length; i++) {
@@ -22,7 +20,7 @@ public class Board {
 				// build board
 				Square newSquare = new Square(currentColor, new Location(file, BOARD_LENGTH - 1 - i));
 				locationsquareMap.put(newSquare.getLocation(), newSquare);
-				boardSquares[column][i] = newSquare;				
+				boardSquares[column][BOARD_LENGTH - 1 - i] = newSquare;				
 				currentColor = (currentColor == SquareColor.DARK) ? SquareColor.LIGHT : SquareColor.DARK;
 				column++;
 			}

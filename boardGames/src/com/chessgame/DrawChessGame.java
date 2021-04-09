@@ -21,6 +21,10 @@ import com.squares.Square;
 import com.squares.SquareColor;
 
 public class DrawChessGame extends JPanel implements MouseListener, MouseMotionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2L;
 	private Graphics2D g2 = null;
 	private Color color;
 	private ChessGame game;
@@ -101,7 +105,7 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 	public void mousePressed(MouseEvent e) {
 		xOrigin = e.getX() / CELL_SIZE;
 		yOrigin = e.getY() / CELL_SIZE;		
-		Location loc = game.getChessboard().getBoardSquares()[xOrigin][7 - yOrigin].getLocation();
+		Location loc = game.getChessboard().getBoardSquares()[xOrigin][yOrigin].getLocation();
 		System.out.println("Pressed: " + loc);
 		currentPiece = allPieces.get(loc);
 		PieceColor turn = turnOfLight == true ? PieceColor.LIGHT : PieceColor.DARK;
@@ -119,7 +123,7 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 		if (currentPiece == null ) return;
 		int xFinal = e.getX() / CELL_SIZE;
 		int yFinal = e.getY() / CELL_SIZE;
-		Location finalLocation = game.getChessboard().getBoardSquares()[xFinal][7 - yFinal].getLocation();
+		Location finalLocation = game.getChessboard().getBoardSquares()[xFinal][yFinal].getLocation();
 		Square current = currentPiece.getCurrentSquare();
 		Square newSquare = game.getChessboard().getLocationsquareMap().get(finalLocation);
 		try {

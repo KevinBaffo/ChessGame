@@ -2,15 +2,12 @@ package com.chesspieces;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.board.Board;
-import com.board.File;
 import com.board.Location;
 import com.board.LocationFactory;
-import com.squares.Square;
 
 public class King extends ChessPiece  implements Movable {
 	PieceColor oppositeColor = pieceColor == PieceColor.LIGHT ? PieceColor.DARK : PieceColor.LIGHT;
@@ -26,12 +23,12 @@ public class King extends ChessPiece  implements Movable {
 		List<Location> moveCandidates = new ArrayList<>();
 		Queen queen = new Queen(pieceColor);
 		queen.setCurrentSquare(currentSquare);
-		Square last = lastSquare;
 		moveCandidates = queen.getValidMoves(board).stream()
 				.filter(candidate -> (
 				Math.abs(candidate.getFile().ordinal()- this.getCurrentSquare().getLocation().getFile().ordinal()) == 1 || 
 				Math.abs(candidate.getRank() - this.getCurrentSquare().getLocation().getRank()) == 1) ||
 				((candidate.getFile().ordinal()- this.getCurrentSquare().getLocation().getFile().ordinal()) == 2 && 
+				(candidate.getRank() == this.getCurrentSquare().getLocation().getRank()) &&
 				canCastleRight(board) == true))
 				.collect(Collectors.toList());
 		
@@ -57,7 +54,7 @@ public class King extends ChessPiece  implements Movable {
 		List<Location> sideLocations = new ArrayList<>();
 		sideLocations.add(LocationFactory.build(board, this.currentSquare, 1 , 0));
 		sideLocations.add(LocationFactory.build(board, this.currentSquare, 2 , 0));
-		Integer i = pieceColor == PieceColor.DARK ? 7 : 0;
+		Integer i = pieceColor == PieceColor.DARK ? 0 : 7;
 		ChessPiece rook = board.getBoardSquares()[7][i].getCurrentPiece();
 //		System.out.println("current " + LocationFactory.build(board, lastSquare, pieceColor, 3, 0));
 //		ChessPiece rook = board.getLocationsquareMap().get(LocationFactory.build(board, this.currentSquare, this.pieceColor, 3, 0)).getCurrentPiece();

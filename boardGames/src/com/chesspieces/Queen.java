@@ -7,26 +7,11 @@ import com.board.Location;
 
 
 public class Queen extends ChessPiece implements Movable {
-//	private ChessPiece bishop; 
-//	private ChessPiece rook;
 	
 	public Queen(PieceColor pieceColor) {
 		super(pieceColor);
 		this.name = "Queen";
 	}
-	
-//	public Queen(PieceColor pieceColor, ChessPiece bishop, ChessPiece rook) {
-//		super(pieceColor);
-//		bishop.setCurrentSquare(this.currentSquare);
-//		this.name = "Queen";
-//		this.bishop = bishop;
-//		this.rook = rook;
-//		//
-////		this.bishop = new Bishop(pieceColor);
-////		this.rook = new Rook(pieceColor);
-//		
-//		//
-//	}
 		
 	@Override
 	public List<Location> getValidMoves(Board board) {

@@ -8,6 +8,8 @@ import com.board.LocationFactory;
 import com.squares.Square;
 
 public class Pawn extends ChessPiece implements Movable {
+	boolean upgradeStatus = false;
+	
 	public Pawn(PieceColor pieceColor) {
 		super(pieceColor);
 		this.name = "Pawn";
@@ -16,33 +18,54 @@ public class Pawn extends ChessPiece implements Movable {
 	@Override
 	public List<Location> getValidMoves(Board board) {
 		List<Location> moveCandidates = new ArrayList<>();
-		Location doubleMove = LocationFactory.build(board, this.currentSquare, 0, 2);
-		Integer currentFile = currentSquare.getLocation().getFile().ordinal();
-		Integer currentRank = currentSquare.getLocation().getRank();
-		if (this.hasMoved == false && board.getLocationsquareMap().get(doubleMove).getCurrentPiece() == null) {
+		Location east = LocationFactory.buildFromPiece(board, this, 1, 1);
+		Location west = LocationFactory.buildFromPiece(board, this, -1, 1);
+		
+		getFirstMove(board, moveCandidates);
+		getForwardMove(board, moveCandidates);
+		getAttackingMove(board, moveCandidates, west);
+		getAttackingMove(board, moveCandidates, east);
+		
+		return moveCandidates;
+	}
+	
+	public void getFirstMove(Board board, List<Location> moveCandidates) {
+		Location doubleMove = LocationFactory.buildFromPiece(board, this, 0, 2);
+		Square square = board.getLocationsquareMap().get(doubleMove);
+		if (this.hasMoved == false && !square.isTaken()) {
 			moveCandidates.add(doubleMove);
 		}
+	}
+	
+	public void getForwardMove(Board board, List<Location> moveCandidates) {
+		Integer currentRank = currentSquare.getLocation().getRank();
 		if (currentRank != 0) {
-			Integer nextRank = this.pieceColor == PieceColor.DARK ? currentRank + 1 : currentRank -1;
-			Location frontSquare = LocationFactory.build(board, this.currentSquare, 0, 1);
+			Location frontSquare = LocationFactory.buildFromPiece(board, this, 0, 1);
 			if (board.getLocationsquareMap().get(frontSquare).getCurrentPiece() == null) {
 				moveCandidates.add(frontSquare);
 			}
-			if (currentFile != 7) {
-				Integer rightFile = currentFile + 1;
-				Square northEastSquare = board.getBoardSquares()[rightFile][7 - nextRank];
-				if (northEastSquare.isTaken() == true && northEastSquare.getCurrentPiece().getPieceColor() != this.pieceColor ) {
-					moveCandidates.add(northEastSquare.getLocation());
-				}
-			} 
-			if (currentFile != 0) {
-				Integer leftFile = currentFile - 1;
-				Square northWestSquare = board.getBoardSquares()[leftFile][7 - nextRank];
-				if (northWestSquare.isTaken() == true && northWestSquare.getCurrentPiece().getPieceColor() != this.pieceColor ) {
-					moveCandidates.add(northWestSquare.getLocation());
-				}
-			}
-		}		
-		return moveCandidates;
+		}
 	}
+	
+	public void getAttackingMove(Board board, List<Location> moveCandidates, Location loc) {
+		if (currentSquare.getLocation().getRank() != 0 &&  currentSquare.getLocation().getFile().ordinal() != 7) {
+			Square square = board.getLocationsquareMap().get(loc);
+			if (square.isTaken() == true && square.getCurrentPiece().getPieceColor() != this.pieceColor ) {
+				moveCandidates.add(loc);
+			}
+		}
+	}
+	
+	public boolean getUpgradeStatus() {
+		if(this.pieceColor == PieceColor.LIGHT && this.currentSquare.getLocation().getRank() == 7 ||
+			this.pieceColor == PieceColor.DARK && this.currentSquare.getLocation().getRank() == 0) {
+			this.upgradeStatus = true;
+		}
+		return this.upgradeStatus;
+	}
+
+	public void setUpgradeStatus(boolean upgradeStatus) {
+		this.upgradeStatus = upgradeStatus;
+	}
+	
 }

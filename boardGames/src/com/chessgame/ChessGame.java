@@ -1,31 +1,26 @@
 package com.chessgame;
 
 import java.awt.BorderLayout;
-import java.awt.Paint;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
 import com.board.Board;
-import com.board.File;
 import com.board.Location;
 import com.chesspieces.ChessPiece;
 import com.chesspieces.ChessPieceFactory;
-import com.chesspieces.DrawPieces;
 import com.chesspieces.PieceColor;
 import com.squares.Square;
-import com.squares.SquareColor;
 
 public class ChessGame {
 	private static final Board chessBoard = new Board();
 	private Map<Location, ChessPiece> chessPieces;
-	private Map<PieceColor, List<Location>> pieceMoves;
 	private ChessPiece king;
 	
 	public ChessGame(Map<Location, ChessPiece> chessPieces) {
 		this.chessPieces = chessPieces;
+		this.assignPieces(chessPieces);
 	}
 	
 	public Board getChessboard() {
@@ -49,10 +44,10 @@ public class ChessGame {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 	}
 	
-	public void assignPieces() {
+	public void assignPieces(Map<Location, ChessPiece> pieces) {
 		for(Square current : chessBoard.getLocationsquareMap().values()) {
-			if (chessPieces.containsKey(current.getLocation())) {
-				ChessPiece p = chessPieces.get(current.getLocation());
+			if (this.chessPieces.containsKey(current.getLocation())) {
+				ChessPiece p = this.chessPieces.get(current.getLocation());
 				current.setCurrentPiece(p);
 				current.setTaken(true);
 				p.setCurrentSquare(current);
@@ -60,7 +55,7 @@ public class ChessGame {
 		}
 	}
 	
-	public List<Location>getPlayerMoves(PieceColor color) {
+	public List<Location> getPlayerMoves(PieceColor color) {
 		List<Location>  allMoves = new ArrayList<>();
 		for (ChessPiece piece : chessPieces.values()) {
 			if(piece == null) continue;
@@ -93,7 +88,6 @@ public class ChessGame {
 	public static void main(String[] args) {
 		Map<Location, ChessPiece> pieces = ChessPieceFactory.getPieces();
 		ChessGame game = new ChessGame(pieces);
-		game.assignPieces();
 		game.draw();
 	}
 }

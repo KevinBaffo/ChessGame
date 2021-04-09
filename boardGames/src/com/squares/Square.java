@@ -12,7 +12,7 @@ public class Square {
 	public Square(SquareColor squarecolor, Location location) {
 		this.squarecolor = squarecolor;
 		this.location = location;
-		this.isTaken = false;
+		reset();
 	}
 	
 	public void reset() {

@@ -1,6 +1,5 @@
 package com.chesspieces;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -13,9 +12,12 @@ import javax.swing.JPanel;
 import com.board.Location;
 
 public class DrawPieces extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final Integer CELL_SIZE = 64;
 	private Graphics2D g2 = null;
-//	private Color color;
 	private Map<Location, ChessPiece> pieces;
 	
 	public DrawPieces(Map<Location, ChessPiece> pieces) {

@@ -31,11 +31,11 @@ public abstract class ChessPiece implements Movable {
 		return currentSquare;
 	}
 
-	public void setCurrentSquare(Square currentSquare) {
+	public void setCurrentSquare(Square current) {
 		this.lastSquare = this.currentSquare;
-		this.currentSquare = currentSquare;
-		currentSquare.setTaken(true);
-		currentSquare.setCurrentPiece(this);
+		this.currentSquare = current;
+		current.setTaken(true);
+		current.setCurrentPiece(this);
 	}
 
 	public String getName() {
@@ -49,10 +49,8 @@ public abstract class ChessPiece implements Movable {
 	public void makeMove(Board board, Square square) {
 		if (this.getValidMoves(board).contains(square.getLocation()) || 
 			this.hasCastled == true) {
-//			board.getChessPieces().remove(this.getCurrentSquare().getLocation());
 			this.getCurrentSquare().reset();
 			this.setCurrentSquare(square);
-//			board.getChessPieces().put(square.getLocation(), this);
 			this.hasMoved = true;
 			this.hasCastled = false;
 		}else {
