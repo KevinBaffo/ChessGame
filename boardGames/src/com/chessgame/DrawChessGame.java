@@ -92,6 +92,7 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 			g2.drawImage(pieceImage, xPos * CELL_SIZE, yPos * CELL_SIZE, this);
 		}
 	}
+	
 	public void drawCastling(Location location) {
 		Integer rankOfKing = currentPiece.getPieceColor() == PieceColor.DARK ? 0 : 7;
 		Integer rookFileOffset = 1;
@@ -174,9 +175,8 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 		Location finalLocation = game.getChessboard().getBoardSquares()[xFinal][yFinal].getLocation();
 		if (!game.getChessboard().getLocationsquareMap().containsKey(finalLocation)) return; 
 		if (xOrigin != xFinal || yOrigin != yFinal) {
-			if (currentPiece.getValidMoves(game.getChessboard()).contains(finalLocation)) {
-				movePieceTo(finalLocation);
-			}
+			if (currentPiece.getValidMoves(game.getChessboard()).contains(finalLocation)) movePieceTo(finalLocation);
+			
 			if (game.getCastlingMoves(currentPiece.getPieceColor()).contains(finalLocation)) drawCastling(finalLocation);
 			
 		}

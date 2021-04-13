@@ -2,6 +2,13 @@ Tasks:
 	1. Add En passant move to pawns 
 
 Issue Tracking System
+https://en.wikipedia.org/wiki/Rules_of_chess
+	0. Pawn promotion
+	0.1. Check Mate
+	0.2. Resigning 
+	0.3. Dead Position 
+	0.4. Draws 
+	0.5. Flag fall( timer needed?)
 	1. Bishop test
 	2. LocationFactory.buildFromPiece
 	3. Knight test
