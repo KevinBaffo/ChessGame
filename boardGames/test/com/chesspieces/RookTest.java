@@ -3,35 +3,16 @@ package com.chesspieces;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.board.Board;
 import com.board.File;
 import com.board.Location;
-import com.chessgame.ChessGame;
-import com.chesspieces.ChessPiece;
-import com.chesspieces.PieceColor;
-import com.chesspieces.Rook;
-import com.squares.Square;
-import com.squares.SquareColor;
 
 class RookTest {
-
-	@BeforeEach
-	void setUp() throws Exception {}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
- 
+	
 	/////////////////////////////////// Light Pieces ////////////////////////////
 	@Test
 	void testSameFileCandidatesLight_EmptyColumn() {

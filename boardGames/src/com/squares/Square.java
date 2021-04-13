@@ -15,6 +15,11 @@ public class Square {
 		reset();
 	}
 	
+	public void set(ChessPiece piece) {
+		this.currentPiece = piece;
+		this.setTaken(true);
+	}
+	
 	public void reset() {
 		this.isTaken = false;
 		this.currentPiece = null;

@@ -21,7 +21,7 @@ public class Pawn extends ChessPiece implements Movable {
 		Location east = LocationFactory.buildFromPiece(board, this, 1, 1);
 		Location west = LocationFactory.buildFromPiece(board, this, -1, 1);
 		
-		getFirstMove(board, moveCandidates);
+		if (!this.moveStatus) getFirstMove(board, moveCandidates);
 		getForwardMove(board, moveCandidates);
 		getAttackingMove(board, moveCandidates, west);
 		getAttackingMove(board, moveCandidates, east);
@@ -32,7 +32,7 @@ public class Pawn extends ChessPiece implements Movable {
 	public void getFirstMove(Board board, List<Location> moveCandidates) {
 		Location doubleMove = LocationFactory.buildFromPiece(board, this, 0, 2);
 		Square square = board.getLocationsquareMap().get(doubleMove);
-		if (this.hasMoved == false && !square.isTaken()) {
+		if (this.moveStatus == false && !square.isTaken()) {
 			moveCandidates.add(doubleMove);
 		}
 	}
@@ -48,6 +48,7 @@ public class Pawn extends ChessPiece implements Movable {
 	}
 	
 	public void getAttackingMove(Board board, List<Location> moveCandidates, Location loc) {
+		if (loc == null) return;
 		if (currentSquare.getLocation().getRank() != 0 &&  currentSquare.getLocation().getFile().ordinal() != 7) {
 			Square square = board.getLocationsquareMap().get(loc);
 			if (square.isTaken() == true && square.getCurrentPiece().getPieceColor() != this.pieceColor ) {

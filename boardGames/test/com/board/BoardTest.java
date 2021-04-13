@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.board.Board;
 import com.squares.Square;
-import com.squares.SquareColor;
 
 class BoardTest {
 

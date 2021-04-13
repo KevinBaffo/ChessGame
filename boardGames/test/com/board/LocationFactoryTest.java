@@ -4,11 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.board.Board;
-import com.board.File;
-import com.board.Location;
-import com.board.LocationFactory;
-import com.chesspieces.PieceColor;
 import com.squares.Square;
 import com.squares.SquareColor;
 

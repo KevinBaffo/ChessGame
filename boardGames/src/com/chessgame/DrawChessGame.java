@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import com.board.Board;
 import com.board.Location;
+import com.board.LocationFactory;
 import com.chesspieces.ChessPiece;
 import com.chesspieces.PieceColor;
 import com.squares.Square;
@@ -47,13 +48,19 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 		drawPieces(g2);
 		if (currentPiece!= null) {
 			for (Location location : currentPiece.getValidMoves(game.getChessboard())) {
-				drawOptions(g2, location);
-			}	
+				drawOptions(g2, location, Color.blue);
+			}
+			if (currentPiece.getName() == "King") {
+				for (Location loc : game.getCastlingMoves(currentPiece.getPieceColor())) {
+					drawOptions(g2, loc, Color.red);
+				}
+			}
 		}
+		
 	}
 	
-	public void drawOptions(Graphics2D g2, Location loc) {	
-		g2.setColor(Color.blue);
+	public void drawOptions(Graphics2D g2, Location loc, Color color) {	
+		g2.setColor(color);
 		g2.fillOval(CELL_SIZE *loc.getFile().ordinal()+ 2*CELL_SIZE/5, CELL_SIZE * loc.getRank() + 2*CELL_SIZE/5, CELL_SIZE /5, CELL_SIZE/5);
 	}
 	
@@ -85,6 +92,48 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 			g2.drawImage(pieceImage, xPos * CELL_SIZE, yPos * CELL_SIZE, this);
 		}
 	}
+	public void drawCastling(Location location) {
+		Integer rankOfKing = currentPiece.getPieceColor() == PieceColor.DARK ? 0 : 7;
+		Integer rookFileOffset = 1;
+		ChessPiece king = null, rook = null;
+		for(ChessPiece piece : game.getChessPieces().values()) {
+			if (piece.getName() == "King" && piece.getPieceColor().equals(currentPiece.getPieceColor())) {
+				king = piece;
+			}
+		}
+		
+		if (location.getFile().ordinal() > king.getCurrentSquare().getLocation().getFile().ordinal()) {
+			rook = game.getChessboard().getBoardSquares()[7][rankOfKing].getCurrentPiece(); 
+			rookFileOffset *= -1;
+		} else {
+			rook = game.getChessboard().getBoardSquares()[0][rankOfKing].getCurrentPiece();
+			
+		}
+		game.updateChessPieces(location, king);
+		game.updateChessPieces(LocationFactory.buildFromPiece(game.getChessboard(), king, rookFileOffset, 0), rook);
+		turnOfLight = !turnOfLight;
+		repaint();
+	}
+	
+	public void movePieceTo(Location location) {
+		Square originalSquare = currentPiece.getCurrentSquare();
+		Square finalSquare = game.getChessboard().getLocationsquareMap().get(location);
+		ChessPiece foodPiece = finalSquare.getCurrentPiece();
+		// Remove piece that is about to be eaten so that it doesn't effect isInCheck()
+		boolean takingEnemyPiece = game.getChessPieces().containsKey(location)  && !foodPiece.getPieceColor().equals(currentPiece.getPieceColor());
+		if (takingEnemyPiece) game.removeChessPiece(foodPiece);
+
+		game.updateChessPieces(location, currentPiece);
+		if (game.isInCheck(currentPiece.getPieceColor())) {
+			System.out.println("IN CHECK, PLEASE SAVE YOUR KING!");
+			game.updateChessPieces(originalSquare.getLocation(), currentPiece);
+			if (takingEnemyPiece) game.addChessPieces(location, foodPiece);
+		} else {
+			currentPiece.setMoveStatus(true);
+			turnOfLight = !turnOfLight;
+			repaint();
+		}
+	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -106,7 +155,6 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 		xOrigin = e.getX() / CELL_SIZE;
 		yOrigin = e.getY() / CELL_SIZE;		
 		Location loc = game.getChessboard().getBoardSquares()[xOrigin][yOrigin].getLocation();
-		System.out.println("Pressed: " + loc);
 		currentPiece = allPieces.get(loc);
 		PieceColor turn = turnOfLight == true ? PieceColor.LIGHT : PieceColor.DARK;
 		if (currentPiece == null ) {
@@ -124,67 +172,21 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 		int xFinal = e.getX() / CELL_SIZE;
 		int yFinal = e.getY() / CELL_SIZE;
 		Location finalLocation = game.getChessboard().getBoardSquares()[xFinal][yFinal].getLocation();
-		Square current = currentPiece.getCurrentSquare();
-		Square newSquare = game.getChessboard().getLocationsquareMap().get(finalLocation);
-		try {
-			game.getChessboard().getLocationsquareMap().containsKey(finalLocation);
-		} catch (Exception e2) {
-			e2.printStackTrace();
-			return;
-		}
+		if (!game.getChessboard().getLocationsquareMap().containsKey(finalLocation)) return; 
 		if (xOrigin != xFinal || yOrigin != yFinal) {
-			ChessPiece food = newSquare.getCurrentPiece();
-			// remove piece that is about to be eaten so that it doeant affect isInCheck()
-			boolean pieceEaten = false;
-			try {
-				game.getChessPieces().remove(newSquare.getLocation());
-				pieceEaten = true;
-			} catch(Exception e3) {
-				e3.printStackTrace();
-				pieceEaten = false;
+			if (currentPiece.getValidMoves(game.getChessboard()).contains(finalLocation)) {
+				movePieceTo(finalLocation);
 			}
-			//
-			currentPiece.makeMove(game.getChessboard(), newSquare);
-			if (game.isInCheck(currentPiece.getPieceColor())) {
-				currentPiece.makeMove(game.getChessboard(), current);
-				if (pieceEaten) game.getChessPieces().put(newSquare.getLocation(), food);
-				System.out.println("IN CHECK, PLEASE SAVE YOUR KING!");
-			} else {
-				game.getChessPieces().remove(current.getLocation());
-				game.getChessPieces().put(finalLocation, currentPiece);
-				turnOfLight = !turnOfLight;
-				repaint();
-			}
+			if (game.getCastlingMoves(currentPiece.getPieceColor()).contains(finalLocation)) drawCastling(finalLocation);
 			
-//			Integer num = current.getLocation().getFile().ordinal() - finalLocation.getFile().ordinal() ;
-//			if (piece.getName() == "King" && 
-//				Math.abs(num) > 1) {
-//				if (num > 0 ) {
-//					ChessPiece rook = locationsquareMap.get(LocationFactory.build(this, current, piece.getPieceColor(), -4, 0)).getCurrentPiece();
-//					Square rookCastlingPosition = locationsquareMap.get(LocationFactory.build(this, current, piece.getPieceColor(), -1, 0));
-//					rook.setHasCastled(true);
-//					rook.makeMove(this, rookCastlingPosition);
-//				} else {
-//					ChessPiece rook = locationsquareMap.get(LocationFactory.build(this, current, piece.getPieceColor(), 3, 0)).getCurrentPiece();
-//					rook.setHasCastled(true);
-//					Square rookCastlingPosition = locationsquareMap.get(LocationFactory.build(this, current, piece.getPieceColor(), 1, 0));
-//					rook.makeMove(this, rookCastlingPosition);
-//				}
-//			}	
 		}
 		currentPiece = null;
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseExited(MouseEvent e) {}
 	
 }

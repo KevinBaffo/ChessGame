@@ -1,33 +1,9 @@
-Rewrite Board so that the constructor doesnt do everything 
-	buildBoard()
-	assignPieces(Map<Location, ChessPiece> chessPieces)
-	resetPieces()
+Tasks:
+	1. Add En passant move to pawns 
 
-Issue Tracking System 
-	Tests:
-	1. Setting Up Game
-	2. Pieces movements
-		> Light & Dark 
-			* Pawns 
-				** initial moves 
-				** Get moves (4 corners + middle area of board)
-				** eat right 
-				** eat left 
-				** upgrade to queen
-			* Rooks 
-				** initial moves
-				** Get moves (4 corners + middle area of board)
-			* Bishops 
-				** initial moves
-				** Get moves (4 corners + middle area of board)
-			* Knights 
-				** initial moves
-				** Get moves (4 corners + middle area of board) 
-			* King 
-				** initial moves
-				** Get moves (4 corners + middle area of board)
-	3. Castling 
-		> Light & Dark 
-			* Right 
-			* Left 
-	4. Fix up King class
+Issue Tracking System
+	1. Bishop test
+	2. LocationFactory.buildFromPiece
+	3. Knight test
+	4. Castling test (might need to create a whole game for each scenario x4)
+	5. DrawPieces test??

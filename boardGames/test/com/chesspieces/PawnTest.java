@@ -3,22 +3,14 @@ package com.chesspieces;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.board.Board;
 import com.board.File;
 import com.board.Location;
 import com.board.LocationFactory;
-import com.chesspieces.ChessPiece;
-import com.chesspieces.Pawn;
-import com.chesspieces.PieceColor;
 import com.squares.Square;
 
 class PawnTest {

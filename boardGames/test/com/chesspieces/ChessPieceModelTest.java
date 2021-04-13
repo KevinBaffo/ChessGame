@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import com.board.Board;
 import com.board.File;
 import com.board.Location;
-import com.chesspieces.ChessPiece;
-import com.chesspieces.PieceColor;
 import com.squares.Square;
 import com.squares.SquareColor;
 
