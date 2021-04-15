@@ -18,6 +18,7 @@ import com.board.Location;
 import com.board.LocationFactory;
 import com.chesspieces.ChessPiece;
 import com.chesspieces.PieceColor;
+import com.chesspieces.Queen;
 import com.squares.Square;
 import com.squares.SquareColor;
 
@@ -93,49 +94,6 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 		}
 	}
 	
-	public void drawCastling(Location location) {
-		Integer rankOfKing = currentPiece.getPieceColor() == PieceColor.DARK ? 0 : 7;
-		Integer rookFileOffset = 1;
-		ChessPiece king = null, rook = null;
-		for(ChessPiece piece : game.getChessPieces().values()) {
-			if (piece.getName() == "King" && piece.getPieceColor().equals(currentPiece.getPieceColor())) {
-				king = piece;
-			}
-		}
-		
-		if (location.getFile().ordinal() > king.getCurrentSquare().getLocation().getFile().ordinal()) {
-			rook = game.getChessboard().getBoardSquares()[7][rankOfKing].getCurrentPiece(); 
-			rookFileOffset *= -1;
-		} else {
-			rook = game.getChessboard().getBoardSquares()[0][rankOfKing].getCurrentPiece();
-			
-		}
-		game.updateChessPieces(location, king);
-		game.updateChessPieces(LocationFactory.buildFromPiece(game.getChessboard(), king, rookFileOffset, 0), rook);
-		turnOfLight = !turnOfLight;
-		repaint();
-	}
-	
-	public void movePieceTo(Location location) {
-		Square originalSquare = currentPiece.getCurrentSquare();
-		Square finalSquare = game.getChessboard().getLocationsquareMap().get(location);
-		ChessPiece foodPiece = finalSquare.getCurrentPiece();
-		// Remove piece that is about to be eaten so that it doesn't effect isInCheck()
-		boolean takingEnemyPiece = game.getChessPieces().containsKey(location)  && !foodPiece.getPieceColor().equals(currentPiece.getPieceColor());
-		if (takingEnemyPiece) game.removeChessPiece(foodPiece);
-
-		game.updateChessPieces(location, currentPiece);
-		if (game.isInCheck(currentPiece.getPieceColor())) {
-			System.out.println("IN CHECK, PLEASE SAVE YOUR KING!");
-			game.updateChessPieces(originalSquare.getLocation(), currentPiece);
-			if (takingEnemyPiece) game.addChessPieces(location, foodPiece);
-		} else {
-			currentPiece.setMoveStatus(true);
-			turnOfLight = !turnOfLight;
-			repaint();
-		}
-	}
-
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (currentPiece == null ) return;
@@ -148,7 +106,6 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		mousePressed(e);
-		repaint();
 	}
 
 	@Override
@@ -169,17 +126,18 @@ public class DrawChessGame extends JPanel implements MouseListener, MouseMotionL
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		boolean status = false;
 		if (currentPiece == null ) return;
 		int xFinal = e.getX() / CELL_SIZE;
 		int yFinal = e.getY() / CELL_SIZE;
 		Location finalLocation = game.getChessboard().getBoardSquares()[xFinal][yFinal].getLocation();
 		if (!game.getChessboard().getLocationsquareMap().containsKey(finalLocation)) return; 
 		if (xOrigin != xFinal || yOrigin != yFinal) {
-			if (currentPiece.getValidMoves(game.getChessboard()).contains(finalLocation)) movePieceTo(finalLocation);
-			
-			if (game.getCastlingMoves(currentPiece.getPieceColor()).contains(finalLocation)) drawCastling(finalLocation);
-			
+			if(game.movePieceTo(currentPiece, finalLocation) || game.drawCastling(currentPiece, finalLocation)) status = true;
+			game.upgradePawn(currentPiece, finalLocation);		
 		}
+		if (status == true) turnOfLight = !turnOfLight;
+		repaint();
 		currentPiece = null;
 	}
 

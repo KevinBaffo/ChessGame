@@ -3,7 +3,7 @@ Tasks:
 
 Issue Tracking System
 https://en.wikipedia.org/wiki/Rules_of_chess
-	0. Pawn promotion
+	0. Pawn promotion (Add option to choose piece to upgrade to)
 	0.1. Check Mate
 	0.2. Resigning 
 	0.3. Dead Position 

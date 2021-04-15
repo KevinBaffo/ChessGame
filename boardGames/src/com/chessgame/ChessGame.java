@@ -8,9 +8,11 @@ import java.util.Map;
 import javax.swing.JFrame;
 import com.board.Board;
 import com.board.Location;
+import com.board.LocationFactory;
 import com.chesspieces.ChessPiece;
 import com.chesspieces.ChessPieceFactory;
 import com.chesspieces.PieceColor;
+import com.chesspieces.Queen;
 import com.squares.Square;
 
 public class ChessGame {
@@ -157,6 +159,66 @@ public class ChessGame {
 	public boolean isUnderAttack(Location toCheck, PieceColor color) {
 		if (getPlayerMoves(color).contains(toCheck)) return true;
 		return false;
+	}
+	
+	public boolean movePieceTo(ChessPiece currentPiece, Location location) {
+		if (!currentPiece.getValidMoves(chessBoard).contains(location)) return false;
+		Square originalSquare = currentPiece.getCurrentSquare();
+		Square finalSquare = chessBoard.getLocationsquareMap().get(location);
+		ChessPiece foodPiece = finalSquare.getCurrentPiece();
+		// Remove piece that is about to be eaten so that it doesn't effect isInCheck()
+		boolean takingEnemyPiece = this.chessPieces.containsKey(location)  && !foodPiece.getPieceColor().equals(currentPiece.getPieceColor());
+		if (takingEnemyPiece) removeChessPiece(foodPiece);
+		
+		updateChessPieces(location, currentPiece);
+		if (isInCheck(currentPiece.getPieceColor())) {
+			System.out.println("IN CHECK, PLEASE SAVE YOUR KING!");
+			updateChessPieces(originalSquare.getLocation(), currentPiece);
+			if (takingEnemyPiece) addChessPieces(location, foodPiece);
+			return false;
+		} else {
+			currentPiece.setMoveStatus(true);
+			return true;
+		}
+	}
+	
+	public boolean drawCastling(ChessPiece currentPiece, Location location) {
+		if (!getCastlingMoves(currentPiece.getPieceColor()).contains(location)) return false;
+		Integer rankOfKing = currentPiece.getPieceColor() == PieceColor.DARK ? 0 : 7;
+		Integer rookFileOffset = 1;
+		ChessPiece king = null, rook = null;
+		for(ChessPiece piece : this.chessPieces.values()) {
+			if (piece.getName() == "King" && piece.getPieceColor().equals(currentPiece.getPieceColor())) {
+				king = piece;
+			}
+		}
+		
+		if (location.getFile().ordinal() > king.getCurrentSquare().getLocation().getFile().ordinal()) {
+			rook = chessBoard.getBoardSquares()[7][rankOfKing].getCurrentPiece(); 
+			rookFileOffset *= -1;
+		} else {
+			rook = chessBoard.getBoardSquares()[0][rankOfKing].getCurrentPiece();
+		}
+		
+		updateChessPieces(location, king);
+		updateChessPieces(LocationFactory.buildFromPiece(chessBoard, king, rookFileOffset, 0), rook);
+		return true; 
+	}
+	
+	public void upgradePawn(ChessPiece currentPiece, Location location) {
+		if(currentPiece.getName() == "Pawn") {
+	//		ChessPiece upgradedPiece = new ChessPiece(currentPiece.getPieceColor()) {};
+	//		System.out.println("Upgrade pawn to : /n/t 1. Queen /n 2. Rook /n 3. Bishop /n 4. Knight");
+			Queen been = new Queen(currentPiece.getPieceColor());
+			if(currentPiece.getPieceColor() == PieceColor.LIGHT && currentPiece.getCurrentSquare().getLocation().getRank() == 0) {
+				removeChessPiece(currentPiece);
+				addChessPieces(location, been);
+			}
+			if(currentPiece.getPieceColor() == PieceColor.DARK && currentPiece.getCurrentSquare().getLocation().getRank() == 7) {
+				removeChessPiece(currentPiece);
+				addChessPieces(location, been);
+			}
+		}
 	}
 	
 	public static void main(String[] args) {
